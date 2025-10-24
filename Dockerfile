@@ -10,4 +10,4 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Copia el resto del código de la aplicación desde el contexto de build
 COPY . .
 
-EXPOSE 8080
+EXPOSE 8000
