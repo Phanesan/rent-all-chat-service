@@ -1,0 +1,30 @@
+# Directorios de Bytecode y Caché de Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.pytest_cache/
+.mypy_cache/
+
+# Entornos virtuales
+.env
+venv/
+.venv/
+env/
+
+# Archivos de configuración de IDEs
+.vscode/
+.idea/
+
+# Archivos de registro (Logs)
+logs/
+*.log
+
+# Archivos de dependencias y builds
+build/
+dist/
+*.egg-info/
+
+# Reportes de cobertura de tests
+.coverage
+htmlcov/
