@@ -2,14 +2,14 @@ version: '3.8'
 
 services:
   chat-service:
-    # Construye la imagen a partir del Dockerfile en el directorio actual
     build: .
-    # Mapea el puerto 8000 del host al puerto 8000 del contenedor
     ports:
       - "8000:8000"
-    # Monta volúmenes para reflejar los cambios en el código y persistir los logs
     volumes:
-      - .:/app
       - ./logs:/app/logs
-    # Comando para iniciar el servidor con recarga automática
-    command: ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000", "--reload", "--app-dir", "/app"]
+    networks:
+      - rentall-network
+
+networks:
+  rentall-network:
+    driver: bridge
