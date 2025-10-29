@@ -55,6 +55,7 @@ class ConnectionManager:
 
             payload = {
                 "from": sender_id,
+                "to": recipient_id,
                 "message": message,
                 "timestamp": timestamp
             }
@@ -68,6 +69,11 @@ class ConnectionManager:
             logging.info(log)
 
 manager = ConnectionManager()
+
+@app.get("/")
+async def root():
+    return open("index.html").read()
+
 
 @app.websocket("/ws/{user_id}")
 async def websocket_endpoint(websocket: WebSocket, user_id: str):

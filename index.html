@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Chat Test</title>
+    <style>
+        body { font-family: sans-serif; }
+        #messages {
+            width: 500px;
+            height: 300px;
+            border: 1px solid #ccc;
+            padding: 10px;
+            overflow-y: scroll;
+            margin-bottom: 10px;
+        }
+        .message { margin-bottom: 5px; }
+        .message .sender { font-weight: bold; }
+    </style>
+</head>
+<body>
+    <h1>WebSocket Chat Test</h1>
+    <div>
+        <label for="userId">Your User ID:</label>
+        <input type="text" id="userId" />
+        <button id="connectButton">Connect</button>
+    </div>
+    <hr>
+    <div id="chat-area" style="display: none;">
+        <div id="messages"></div>
+        <div>
+            <label for="recipientId">Recipient ID:</label>
+            <input type="text" id="recipientId" placeholder="Enter recipient ID" />
+            <input type="text" id="messageInput" placeholder="Type your message..." size="50" />
+            <button id="sendButton">Send</button>
+        </div>
+    </div>
+
+    <script>
+        const userIdInput = document.getElementById('userId');
+        const connectButton = document.getElementById('connectButton');
+        const chatArea = document.getElementById('chat-area');
+        const messagesDiv = document.getElementById('messages');
+        const recipientIdInput = document.getElementById('recipientId');
+        const messageInput = document.getElementById('messageInput');
+        const sendButton = document.getElementById('sendButton');
+
+        let ws;
+
+        connectButton.addEventListener('click', () => {
+            const userId = userIdInput.value;
+            if (!userId) {
+                alert('Please enter a User ID.');
+                return;
+            }
+
+            const protocol = window.location.protocol === 'https:' ? 'wss' : 'ws';
+            const wsUrl = `${protocol}://${window.location.host}/ws/${userId}`;
+            
+            ws = new WebSocket(wsUrl);
+
+            ws.onopen = () => {
+                console.log('WebSocket connection established');
+                alert('Connected!');
+                chatArea.style.display = 'block';
+                connectButton.disabled = true;
+                userIdInput.disabled = true;
+            };
+
+            ws.onmessage = (event) => {
+                const messageData = JSON.parse(event.data);
+                const messageElement = document.createElement('div');
+                messageElement.classList.add('message');
+                
+                const senderId = messageData.from || 'Unknown';
+                const messageContent = messageData.message || '[empty message]';
+
+                messageElement.innerHTML = `<span class="sender">${senderId}:</span> ${messageContent}`;
+                messagesDiv.appendChild(messageElement);
+                messagesDiv.scrollTop = messagesDiv.scrollHeight; // Scroll to bottom
+            };
+
+            ws.onclose = () => {
+                console.log('WebSocket connection closed');
+                alert('Connection closed.');
+                chatArea.style.display = 'none';
+                connectButton.disabled = false;
+                userIdInput.disabled = false;
+            };
+
+            ws.onerror = (error) => {
+                console.error('WebSocket error:', error);
+                alert('An error occurred with the WebSocket connection.');
+            };
+        });
+
+        sendButton.addEventListener('click', () => {
+            const recipientId = recipientIdInput.value;
+            const message = messageInput.value;
+
+            if (!recipientId) {
+                alert('Please enter a Recipient ID.');
+                return;
+            }
+
+            if (ws && ws.readyState === WebSocket.OPEN && message) {
+                const payload = {
+                    recipient_id: recipientId,
+                    message: message
+                };
+                ws.send(JSON.stringify(payload));
+                
+                const messageElement = document.createElement('div');
+                messageElement.classList.add('message');
+                messageElement.innerHTML = `<span class="sender">You to ${recipientId}:</span> ${message}`;
+                messagesDiv.appendChild(messageElement);
+                messagesDiv.scrollTop = messagesDiv.scrollHeight;
+
+                messageInput.value = '';
+            } else {
+                alert('Connection not open or message is empty.');
+            }
+        });
+        
+        messageInput.addEventListener('keyup', (event) => {
+            if (event.key === 'Enter') {
+                sendButton.click();
+            }
+        });
+    </script>
+</body>
+</html>
