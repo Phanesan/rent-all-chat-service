@@ -10,6 +10,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 # Copia el código de la aplicación
 COPY main.py .
+COPY index.html .
 
 # Crea el directorio de logs
 RUN mkdir logs
