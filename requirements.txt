@@ -4,3 +4,4 @@ websockets
 pydantic-settings 
 sqlalchemy  
 psycopg2-binary 
+backports.zoneinfo; python_version < "3.9"
