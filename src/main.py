@@ -4,6 +4,11 @@ from fastapi.responses import HTMLResponse
 import logging
 import os
 
+logging.info("--- Environment Variables ---")
+for key, value in os.environ.items():
+    logging.info(f"{key}={value}")
+logging.info("-----------------------------")
+
 from src.database_manager import Base, engine
 from src.websocket_router import router as websocket_router
 
