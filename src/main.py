@@ -34,7 +34,7 @@ async def root():
 app.include_router(websocket_router)
 
 # Create DB tables on startup
-@app.lifespan("startup")
+@app.on_event("startup")
 async def startup_event():
     logging.info("Application has started.")
     Base.metadata.create_all(bind=engine)
