@@ -2,6 +2,7 @@ import json
 from datetime import datetime
 from zoneinfo import ZoneInfo
 from fastapi import FastAPI, WebSocket, WebSocketDisconnect
+from fastapi.responses import HTMLResponse
 import logging
 import os
 
@@ -72,7 +73,8 @@ manager = ConnectionManager()
 
 @app.get("/")
 async def root():
-    return open("index.html").read()
+    with open("index.html") as f:
+        return HTMLResponse(f.read())
 
 
 @app.websocket("/ws/{user_id}")
