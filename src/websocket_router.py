@@ -1,8 +1,5 @@
 import json
 from fastapi import APIRouter, WebSocket, WebSocketDisconnect
-
-from src.database_manager import SessionLocal
-from src.models import Message
 from src.websocket_manager import manager
 
 router = APIRouter()
@@ -18,18 +15,7 @@ async def websocket_endpoint(websocket: WebSocket, user_id: str):
                 recipient_id = message_data["recipient_id"]
                 message = message_data["message"]
 
-                # Save message to database
-                db = SessionLocal()
-                try:
-                    db_message = Message(
-                        sender_id=user_id,
-                        recipient_id=recipient_id,
-                        message=message
-                    )
-                    db.add(db_message)
-                    db.commit()
-                finally:
-                    db.close()
+                # TODO: Save message to the database
 
                 await manager.send_personal_message(message, recipient_id, user_id)
             except (json.JSONDecodeError, KeyError):

@@ -32,9 +32,3 @@ async def root():
         return HTMLResponse(f.read())
 
 app.include_router(websocket_router)
-
-# Create DB tables on startup
-@app.lifespan("startup")
-async def startup_event():
-    logging.info("Application has started.")
-    Base.metadata.create_all(bind=engine)
