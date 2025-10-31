@@ -4,10 +4,19 @@ from fastapi.responses import HTMLResponse
 import logging
 import os
 
+from src.backend_checker import backend_checker
 from src.database_manager import Base, engine
 from src.websocket_router import router as websocket_router
 
 app = FastAPI()
+
+@app.on_event("startup")
+def startup_event():
+    backend_checker.start()
+
+@app.on_event("shutdown")
+def shutdown_event():
+    backend_checker.stop()
 
 # Logging configuration
 LOGS_DIR = "logs"
