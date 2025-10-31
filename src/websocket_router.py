@@ -53,5 +53,5 @@ async def websocket_endpoint(websocket: WebSocket, user_id: str, db: Session = D
                 await manager.send_personal_message(message_content, recipient_id, user_id)
             except (json.JSONDecodeError, KeyError):
                 await websocket.send_json({"error": "Mensaje debe ser un JSON con 'recipient_id' y 'message'.", "code": 1001})
-    except WebSocketDisconnect:
+    except (WebSocketDisconnect, RuntimeError):
         manager.disconnect(user_id)
