@@ -15,6 +15,7 @@ services:
       - DB_USERNAME=${DB_USERNAME}
       - DB_PASSWORD=${DB_PASSWORD}
       - DB_NAME=${DB_NAME}
+      - BACKEND_URL=${BACKEND_URL}
 
 networks:
   rentall-network:
