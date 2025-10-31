@@ -17,17 +17,16 @@ router = APIRouter()
 async def websocket_endpoint(websocket: WebSocket, user_id: str, db: Session = Depends(get_db)):
     await websocket.accept()
 
-    # Esperar a que el backend este disponible antes de registrar la conexion
-    while not backend_checker.is_available:
-        await websocket.send_json({"status": "waiting_for_backend", "message": "Servicio no disponible, esperando al backend...", "code": 2000})
-        await asyncio.sleep(5)
-
-    # Registrar la conexion una vez que el backend esta listo
-    manager.active_connections[user_id] = websocket
-    timestamp = datetime.now(ZoneInfo("UTC")).isoformat()
-    logging.info(f"[{timestamp}] Usuario conectado: {user_id}")
-
     try:
+        # Esperar a que el backend este disponible antes de registrar la conexion
+        while not backend_checker.is_available:
+            await websocket.send_json({"status": "waiting_for_backend", "message": "Servicio no disponible, esperando al backend...", "code": 2000})
+            await asyncio.sleep(5)
+
+        # Registrar la conexion una vez que el backend esta listo
+        manager.active_connections[user_id] = websocket
+        timestamp = datetime.now(ZoneInfo("UTC")).isoformat()
+        logging.info(f"[{timestamp}] Usuario conectado: {user_id}")
         while True:
             # Bucle de espera si el backend se cae durante la operacion
             if not backend_checker.is_available:
